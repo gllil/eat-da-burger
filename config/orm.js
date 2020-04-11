@@ -1,27 +1,56 @@
 const connection = require("./connection")
 
+function printQuestionMarks(num) {
+    let arr = [];
+  
+    for (var i = 0; i < num; i++) {
+      arr.push("?");
+    }
+  
+    return arr.toString();
+  }
+  
 
 const orm = {
-    selectAll: () => {
+    selectAll: (tableInput, cb) => {
         
-        connection.query("SELECT * FROM burger;", (err, result) => {
+        connection.query("SELECT * FROM " + tableInput + ";", (err, result) => {
             if (err) throw err;
-            return result;
+            cb(result);
         })
     },
 
-    insertOne: (burgerInput) => {
-        connection.query("INSERT INTO burgers (burger_name) VALUES ? ", [burgerInput], (err, result) => {
+    insertOne: (table, cols, vals, cb) => {
+        let queryString = "INSERT INTO " + table;
+
+        queryString += " (";
+        queryString += cols.toString();
+        queryString += ") ";
+        queryString += "VALUES (";
+        queryString += printQuestionMarks(vals.length);
+        queryString += ") ";
+
+        connection.query(queryString, vals, (err, result) => {
             if (err) throw err;
-            return result
+            cb(result)
         })
     },
 
-    updateOne: (burgerInput, burgerId) => {
-        connection.query("UPDATE burgers SET burger_name = ? WHERE id = ?", [burgerInput, burgerId], (err, result) => {
-            if (err) throw err;
+    updateOne: (table, objColVals, condition, cb) => {
 
-            return result;
+        let queryString = "UPDATE " + table;
+
+        queryString += " SET ";
+        queryString += objToSql(objColVals);
+        queryString += " WHERE ";
+        queryString += condition;
+        
+        connection.query(queryString, function(err, result) {
+            if (err) {
+              throw err;
+            }
+      
+            cb(result);
         })
     }
 }
