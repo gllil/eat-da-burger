@@ -1,0 +1,104 @@
+<div class="container">
+    <div class="row">
+        <div class="col s3 push-s4">
+    <img id="burgerImg" class="" src="https://../public/assets/img/149335.jpg" alt="burger image">
+        </div>
+    </div>
+    <h1 class="red-text center">Eat Da Burger!</h1>
+
+    <div class="row">
+        <div class="col s6 addedBurger">
+            {{#if devoured}}
+            <p></p>
+            {{else}}
+            <ul class="collection" id="burgers">
+                {{#each burgers}}
+            <li class="collection-item" name="id">
+
+                    {{this.id}}. {{this.burger_name}}
+    
+                <a data-burgerid="{{id}}" data-devoured="{{devoured}}" class="waves-effect waves-light btn blue darken-3  btn-small right" id="devourBurger" value="1"><i class="material-icons right">restaurant</i>Devour</a>
+            </li>
+                      
+            {{/each}}
+            </ul>
+            {{/if}}
+        </div>
+        <div class="col s6 devouredBurger">
+            {{#if devoured}}
+                        <ul class="collection">
+                {{#each burgers}}
+            <li class="collection-item">
+
+                    {{this.id}}. {{this.burger_name}}
+    
+                
+            </li>
+                      
+            {{/each}}
+            </ul>
+            {{/if}}
+        </div>
+    </div>
+      <div class="row">
+    <form class="col s12" >
+      <div class="row">
+        <div class="input-field col s6 push-s3" id="addBurger" >
+          {{!-- <i class="material-icons prefix">mode_edit</i> --}}
+          <textarea name="burger" class="materialize-textarea white"></textarea>
+          <label for="burger">Enter a burger</label>
+            <div class="center">
+            <button class="btn waves-effect waves-light btn-small blue darken-3"  type="submit" id="addBurgerBtn">Submit
+            <i class="material-icons right">send</i>
+            </button>
+            </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+
+
+
+$("#addBurgerBtn").on("click", event => {
+    event.preventDefault();
+
+    const newBurger = {
+        burger_name: $("#addBurger [name=burger]").val().trim(),
+        devoured: false
+    }
+
+    $.ajax("/api/burgers", {
+        type: "POST",
+        data: newBurger
+    }).then(
+        () => {console.log("Added new burger");
+
+        location.reload();
+        }
+    );
+})
+
+$("#devourBurger").on("click", event => {
+    event.preventDefault();
+    const id = $(this).data("id");
+    
+    const hasDevoured = $(this).data("devoured")
+
+    $.ajax("/api/burgers/" + id, {
+        type: "PUT",
+        data: hasDevoured
+    }).then(
+    function() {
+        console.log("updated id ", id);
+
+        location.reload();
+    }
+    )
+})
+
+</script>

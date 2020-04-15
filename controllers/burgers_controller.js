@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/api/burgers", (req, res) => {
-    burger.insertOne(["burger_name"], [req.body.name],
+    burger.insertOne(["burger_name"], [req.body.burger_name],
     (result) => {
 
         res.json({ id: result.insertId });
@@ -25,7 +25,7 @@ router.put("/api/burgers/:id", (req, res) => {
     const condition = "id = " + req.params.id;
 
     burger.updateOne({
-     burger_name: req.body.name   
+     devoured: req.body.devoured   
     }, condition, (result) => {
         if (result.changedRows == 0) {
             return res.status(404).end();
